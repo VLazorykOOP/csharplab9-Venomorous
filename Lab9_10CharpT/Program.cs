@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Lab9_10CharpT;
-using Lab9_10CharpT.Lab9_10CharpT;
 
 class Program
 {
@@ -34,7 +33,8 @@ class Program
                     break;
 
                 case "3":
-                    FormulaEvaluatorArrayList.Task3_1();
+                    FormulaEvaluatorArrayList formulaEvaluator = new FormulaEvaluatorArrayList();
+                    formulaEvaluator.Task3_1();
                     break;
 
                 case "4":

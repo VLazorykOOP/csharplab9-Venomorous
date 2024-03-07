@@ -13,105 +13,232 @@ namespace Lab9_10CharpT
     using System.Text;
     using System.Threading.Tasks;
 
-    namespace Lab9_10CharpT
+    //class FormulaEvaluatorArrayList
+    //{
+    //    public static void Task3_1()
+    //    {
+    //        string formula = ReadFormulaFromFile("formula.txt");
+    //        int result = EvaluateFormula(formula);
+
+    //        Console.WriteLine($"Result: {result}");
+    //    }
+
+    //    static string ReadFormulaFromFile(string filePath)
+    //    {
+    //        try
+    //        {
+    //            return File.ReadAllText(filePath).Trim();
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            Console.WriteLine($"An error occurred while reading the file: {ex.Message}");
+    //            return string.Empty;
+    //        }
+    //    }
+
+    //    static int EvaluateFormula(string formula)
+    //    {
+    //        Stack<int> operandStack = new Stack<int>();
+    //        Stack<char> operatorStack = new Stack<char>();
+    //        int openingParenthesesCount = 0;
+    //        int result = 0;
+
+    //        for (int i = 0; i < formula.Length; i++)
+    //        {
+    //            char currentChar = formula[i];
+    //            //Console.WriteLine($"current char: {currentChar}");
+
+    //            if (char.IsDigit(currentChar))
+    //            {
+    //                int digit = currentChar - '0';
+    //                operandStack.Push(digit);
+    //            }
+    //            else if (currentChar == 'M' || currentChar == 'm')
+    //            {
+    //                operatorStack.Push(currentChar);
+    //            }
+    //            else if (currentChar == '(')
+    //            {
+    //                openingParenthesesCount++;
+    //            }
+    //            else if (currentChar == ')')
+    //            {
+    //                openingParenthesesCount--;
+    //            }
+    //        }
+
+    //        if (openingParenthesesCount != 0)
+    //        {
+    //            throw new InvalidOperationException(
+    //                "Invalid formula. Parentheses are not balanced."
+    //            );
+    //        }
+
+    //        while (operatorStack.Count > 0)
+    //        {
+    //            result = PerformCalculations(operandStack, operatorStack);
+    //            operandStack.Push(result);
+    //        }
+
+    //        return result;
+    //    }
+
+    //    static int PerformCalculations(Stack<int> operandStack, Stack<char> operatorStack)
+    //    {
+    //        while (operatorStack.Count > 0)
+    //        {
+    //            char currentOperator = operatorStack.Pop();
+    //            int operand1 = operandStack.Pop();
+    //            int operand2 = operandStack.Pop();
+    //            //Console.WriteLine(
+    //            //    $"current operator: {currentOperator}\n"
+    //            //        + $"operand1: {operand1} and operand2: {operand2}"
+    //            //);
+
+    //            if (currentOperator == 'M')
+    //            {
+    //                return Math.Max(operand1, operand2);
+    //            }
+    //            else if (currentOperator == 'm')
+    //            {
+    //                return Math.Min(operand1, operand2);
+    //            }
+    //            else
+    //            {
+    //                throw new InvalidOperationException("Invalid operator.");
+    //            }
+    //        }
+
+    //        return 0;
+    //    }
+    //}
+
+    public class FormulaEvaluatorArrayList : IEnumerable, IComparable, ICloneable
     {
-        internal class FormulaEvaluatorArrayList
+        private ArrayList operandList;
+        private ArrayList operatorList;
+
+        public FormulaEvaluatorArrayList()
         {
-            public static void Task3_1()
-            {
-                string formula = ReadFormulaFromFile("formula.txt");
-                int result = EvaluateFormula(formula);
+            operandList = new ArrayList();
+            operatorList = new ArrayList();
+        }
 
-                Console.WriteLine($"Result: {result}");
+        public IEnumerator GetEnumerator()
+        {
+            return operandList.GetEnumerator();
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null)
+                return 1;
+
+            FormulaEvaluatorArrayList otherEvaluator = obj as FormulaEvaluatorArrayList;
+
+            if (otherEvaluator != null)
+            {
+                return operandList.Count.CompareTo(otherEvaluator.operandList.Count);
+            }
+            else
+            {
+                throw new ArgumentException("Object is not a FormulaEvaluatorArrayList");
+            }
+        }
+
+        public object Clone()
+        {
+            FormulaEvaluatorArrayList clone = new FormulaEvaluatorArrayList();
+            clone.operandList.AddRange(operandList);
+            clone.operatorList.AddRange(operatorList);
+            return clone;
+        }
+
+        public void Task3_1()
+        {
+            string formula = ReadFormulaFromFile("formula.txt");
+            int result = EvaluateFormula(formula);
+
+            Console.WriteLine($"Result: {result}");
+        }
+
+        private string ReadFormulaFromFile(string filePath)
+        {
+            try
+            {
+                return File.ReadAllText(filePath).Trim();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while reading the file: {ex.Message}");
+                return string.Empty;
+            }
+        }
+
+        private int EvaluateFormula(string formula)
+        {
+            int openingParenthesesCount = 0;
+
+            for (int i = 0; i < formula.Length; i++)
+            {
+                char currentChar = formula[i];
+
+                if (char.IsDigit(currentChar))
+                {
+                    int digit = currentChar - '0';
+                    operandList.Add(digit);
+                }
+                else if (currentChar == 'M' || currentChar == 'm')
+                {
+                    operatorList.Add(currentChar);
+                }
+                else if (currentChar == '(')
+                {
+                    openingParenthesesCount++;
+                }
+                else if (currentChar == ')')
+                {
+                    openingParenthesesCount--;
+                }
             }
 
-            static string ReadFormulaFromFile(string filePath)
+            if (openingParenthesesCount != 0)
             {
-                try
-                {
-                    return File.ReadAllText(filePath).Trim();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"An error occurred while reading the file: {ex.Message}");
-                    return string.Empty;
-                }
+                throw new InvalidOperationException(
+                    "Invalid formula. Parentheses are not balanced."
+                );
             }
 
-            static int EvaluateFormula(string formula)
+            while (operatorList.Count > 0)
             {
-                Stack<int> operandStack = new Stack<int>();
-                Stack<char> operatorStack = new Stack<char>();
-                int openingParenthesesCount = 0;
-                int result = 0;
-
-                for (int i = 0; i < formula.Length; i++)
-                {
-                    char currentChar = formula[i];
-                    //Console.WriteLine($"current char: {currentChar}");
-
-                    if (char.IsDigit(currentChar))
-                    {
-                        int digit = currentChar - '0';
-                        operandStack.Push(digit);
-                    }
-                    else if (currentChar == 'M' || currentChar == 'm')
-                    {
-                        operatorStack.Push(currentChar);
-                    }
-                    else if (currentChar == '(')
-                    {
-                        openingParenthesesCount++;
-                    }
-                    else if (currentChar == ')')
-                    {
-                        openingParenthesesCount--;
-                    }
-                }
-
-                if (openingParenthesesCount != 0)
-                {
-                    throw new InvalidOperationException(
-                        "Invalid formula. Parentheses are not balanced."
-                    );
-                }
-
-                while (operatorStack.Count > 0)
-                {
-                    result = PerformCalculations(operandStack, operatorStack);
-                    operandStack.Push(result);
-                }
-
-                return result;
+                PerformCalculations();
             }
 
-            static int PerformCalculations(Stack<int> operandStack, Stack<char> operatorStack)
+            return (int)operandList[0];
+        }
+
+        private void PerformCalculations()
+        {
+            char currentOperator = (char)operatorList[operatorList.Count - 1];
+            operatorList.RemoveAt(operatorList.Count - 1);
+
+            int operand1 = (int)operandList[operandList.Count - 1];
+            operandList.RemoveAt(operandList.Count - 1);
+
+            int operand2 = (int)operandList[operandList.Count - 1];
+            operandList.RemoveAt(operandList.Count - 1);
+
+            if (currentOperator == 'M')
             {
-                while (operatorStack.Count > 0)
-                {
-                    char currentOperator = operatorStack.Pop();
-                    int operand1 = operandStack.Pop();
-                    int operand2 = operandStack.Pop();
-                    //Console.WriteLine(
-                    //    $"current operator: {currentOperator}\n"
-                    //        + $"operand1: {operand1} and operand2: {operand2}"
-                    //);
-
-                    if (currentOperator == 'M')
-                    {
-                        return Math.Max(operand1, operand2);
-                    }
-                    else if (currentOperator == 'm')
-                    {
-                        return Math.Min(operand1, operand2);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Invalid operator.");
-                    }
-                }
-
-                return 0;
+                operandList.Add(Math.Max(operand1, operand2));
+            }
+            else if (currentOperator == 'm')
+            {
+                operandList.Add(Math.Min(operand1, operand2));
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid operator.");
             }
         }
     }
